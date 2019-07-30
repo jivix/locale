@@ -1,0 +1,37 @@
+{
+    "name": "jivix/locale",
+    "description": "Locale library",
+    "type": "library",
+    "keywords": [
+        "locale"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeroen van den Bos",
+            "email": "jeroen@jivix.net"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/jivix/locale/issues",
+        "source": "https://github.com/jivix/locale"
+    },
+    "require": {
+        "php": "^7.4",
+        "ext-intl": "*"
+    },
+    "require-dev": {
+        "mockery/mockery": "~1.0",
+        "phpunit/phpunit": "~7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jivix\\Locale\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jivix\\Locale\\Tests\\": "tests/"
+        }
+    }
+}
