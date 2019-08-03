@@ -182,9 +182,6 @@ class Locale implements Serializable
     public function __construct(string $language, ?string $country = null, ?string $script = null, ?string $variant = null)
     {
         // Language
-        if (null === $language) {
-            throw new InvalidArgumentException('Argument `language` cannot be null.');
-        }
         if (preg_match('/^[a-z]{2,3}/', $language) && in_array($language, self::getISOLanguages())) {
             $this->language = $language;
         } else {
@@ -228,10 +225,7 @@ class Locale implements Serializable
      */
     public function getDisplayName(Locale $locale = null): string
     {
-        if (null === $locale) {
-            $locale = $this;
-        }
-        return \Locale::getDisplayName($this->toLanguageTag(), $locale->toLanguageTag());
+        return \Locale::getDisplayName($this->toLanguageTag(), ($locale ?? $this)->toLanguageTag());
     }
 
     /**
@@ -240,10 +234,7 @@ class Locale implements Serializable
      */
     public function getDisplayLanguage(Locale $locale = null): string
     {
-        if (null === $locale) {
-            $locale = $this;
-        }
-        return \Locale::getDisplayLanguage($this->toLanguageTag(), $locale->toLanguageTag());
+        return \Locale::getDisplayLanguage($this->toLanguageTag(), ($locale ?? $this)->toLanguageTag());
     }
 
     /**
@@ -252,11 +243,8 @@ class Locale implements Serializable
      */
     public function getDisplayScript(Locale $locale = null): ?string
     {
-        if (null === $locale) {
-            $locale = $this;
-        }
         return null !== $this->script
-            ? \Locale::getDisplayScript($this->toLanguageTag(), $locale->toLanguageTag())
+            ? \Locale::getDisplayScript($this->toLanguageTag(), ($locale ?? $this)->toLanguageTag())
             : null;
     }
 
@@ -266,11 +254,8 @@ class Locale implements Serializable
      */
     public function getDisplayCountry(Locale $locale = null): ?string
     {
-        if (null === $locale) {
-            $locale = $this;
-        }
         return null !== $this->country
-            ? \Locale::getDisplayRegion($this->toLanguageTag(), $locale->toLanguageTag())
+            ? \Locale::getDisplayRegion($this->toLanguageTag(), ($locale ?? $this)->toLanguageTag())
             : null;
     }
 
@@ -280,11 +265,8 @@ class Locale implements Serializable
      */
     public function getDisplayVariant(Locale $locale = null): ?string
     {
-        if (null === $locale) {
-            $locale = $this;
-        }
         return null !== $this->variant
-            ? \Locale::getDisplayVariant($this->toLanguageTag(), $locale->toLanguageTag())
+            ? \Locale::getDisplayVariant($this->toLanguageTag(), ($locale ?? $this)->toLanguageTag())
             : null;
     }
 
@@ -326,8 +308,7 @@ class Locale implements Serializable
     public function getISO3Language(): ?string
     {
         $key = array_search($this->language, self::$languages);
-
-        return self::$iso3languages[$key] ?? null;
+        return $key === false ? null : (self::$iso3languages[$key] ?? null);
     }
 
     /**
@@ -336,8 +317,7 @@ class Locale implements Serializable
     public function getISO3Country(): ?string
     {
         $key = array_search($this->country, self::$countries);
-
-        return self::$iso3countries[$key] ?? null;
+        return $key === false ? null : self::$iso3countries[$key] ?? null;
     }
 
     /**
@@ -385,55 +365,14 @@ class Locale implements Serializable
     }
 
     /**
-     * Returns a list of all 3-letter language codes defined in ISO 639.
-     *
-     * @return array
-     */
-    public static function getISO3Languages(): array
-    {
-        return self::$iso3languages;
-    }
-
-    /**
-     * Returns a list of all 3-letter country codes defined in ISO 3166.
-     *
-     * @return array
-     */
-    public static function getISO3Countries(): array
-    {
-        return self::$iso3countries;
-    }
-
-//    /**
-//     * @param Locale $locale
-//     * @return array
-//     * @throws NullPointerException
-//     */
-//    public static function getLocales(): array
-//    {
-//        $languageTags = self::getLanguageTags();
-//
-//        $locales = [];
-//        foreach ($languageTags as $languageTag => $translation) {
-//            $locales[] = Locale::forLanguageTag($languageTag);
-//        }
-//
-//        return $locales;
-//    }
-
-    /**
      * Returns a locale for the specified IETF BCP 47 language tag string.
      *
      * @param string $languageTag IETF BCP 47 language tag
      * @return Locale The locale that best represents the language tag
      * @throws InvalidArgumentException
      */
-    public static function forLanguageTag(?string $languageTag): Locale
+    public static function forLanguageTag(string $languageTag): Locale
     {
-        if (null === $languageTag) {
-            throw new InvalidArgumentException('Argument `languageTag` cannot be null.');
-        }
-
         $language = null;
         $country = null;
         $script = null;

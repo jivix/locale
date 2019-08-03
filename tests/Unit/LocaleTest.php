@@ -19,7 +19,7 @@ class LocaleTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $locale = new Locale('foo', 'bar');
+        new Locale('foo', 'bar');
     }
 
     public function testDisplayNameSameLocale()
@@ -77,24 +77,30 @@ class LocaleTest extends TestCase
         $this->assertNull($locale->getVariant());
         $this->assertEquals('eng', $locale->getISO3Language());
         $this->assertEquals('USA', $locale->getISO3Country());
+        $this->assertEquals('en-US', $locale->toLanguageTag());
 
-        $locale = $locale = new Locale('en', 'US');
+        $locale = $locale = new Locale('zh', null, 'Hans');
 
-        $this->assertEquals('English (United States)', $locale->getDisplayName());
-        $this->assertEquals('English', $locale->getDisplayLanguage());
-        $this->assertNull($locale->getDisplayScript());
-        $this->assertEquals('United States', $locale->getDisplayCountry());
+        $this->assertEquals('中文（简体）', $locale->getDisplayName());
+        $this->assertEquals('中文', $locale->getDisplayLanguage());
+        $this->assertEquals('简体中文', $locale->getDisplayScript());
+        $this->assertNull($locale->getDisplayCountry());
         $this->assertNull($locale->getDisplayVariant());
-        $this->assertEquals('en', $locale->getLanguage());
-        $this->assertNull($locale->getScript());
-        $this->assertEquals('US', $locale->getCountry());
+        $this->assertEquals('zh', $locale->getLanguage());
+        $this->assertEquals('Hans', $locale->getScript());
+        $this->assertNull($locale->getCountry());
         $this->assertNull($locale->getVariant());
-        $this->assertEquals('eng', $locale->getISO3Language());
-        $this->assertEquals('USA', $locale->getISO3Country());
+        $this->assertEquals('zho', $locale->getISO3Language());
+        $this->assertNull($locale->getISO3Country());
+        $this->assertEquals('zh-Hans', $locale->toLanguageTag());
     }
 
-//    public function test()
-//    {
-//
-//    }
+    public function testSerialization()
+    {
+        $in = $locale = new Locale('en', 'US');
+
+        $out = unserialize(serialize($in));
+
+        $this->assertEquals('en-US', $out->toLanguageTag());
+    }
 }
